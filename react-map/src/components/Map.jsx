@@ -14,7 +14,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiamVzdXN0ZWMiLCJhIjoiY21oaTI4MGg0MDhlcjJpb2Rqe
 const INITIAL_CENTER = [-102.54997, 23.87671];
 const INITIAL_ZOOM = 4.2;
 
-export default function Map({ onZoomChange }) {
+export default function Map({ onZoomChange, onConflictSelect }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
 
@@ -40,13 +40,12 @@ export default function Map({ onZoomChange }) {
     return () => map.current?.remove();
   }, []);
 
-
   const addMarkers = () => {
     conflicts.forEach((conflict) => {
       const el = document.createElement('div');
       el.className = `marker marker-${conflict.type}`;
 
-      // Click para hacer zoom
+      // Click para hacer zoom Y abrir panel
       el.addEventListener('click', () => {
         map.current.flyTo({
           center: conflict.coordinates,
@@ -54,21 +53,13 @@ export default function Map({ onZoomChange }) {
           duration: 1500,
           essential: true
         });
-        onZoomChange?.(true); // Mostrar botón de reset
+        onZoomChange?.(true);
+        onConflictSelect?.(conflict); // Abrir panel lateral
       });
 
-      const popup = new mapboxgl.Popup({ offset: 25 })
-        .setHTML(`
-          <h3>${conflict.title}</h3>
-          <p>${conflict.description}</p>
-          <div class="popup-severity">
-            <span>Gravedad: ${conflict.severity}%</span>
-          </div>
-        `);
-
+      // YA NO usamos popup
       new mapboxgl.Marker(el)
         .setLngLat(conflict.coordinates)
-        .setPopup(popup)
         .addTo(map.current);
     });
   };

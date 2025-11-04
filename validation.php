@@ -7,7 +7,7 @@ $contraseña_correcta = "12345";
 
     if ($_POST['usuario'] === $usuario_correcto && $_POST['contraseña'] === $contraseña_correcta) {
         $_SESSION['usuario'] = $_POST['usuario'];
-        header("Location: map.html");
+        header("Location: http://localhost:5173");
         exit();
     } else {
 
